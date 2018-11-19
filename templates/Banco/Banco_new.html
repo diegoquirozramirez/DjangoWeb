@@ -1,0 +1,13 @@
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+{% extends 'Principal/index.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<form method="post" style="width: 50% ">
+{% csrf_token %}
+{{ form.as_p }}
+<br><button class="btn btn-primary" type="submit"> Guardar</button>
+<a class="btn btn-danger" style="color: white" href="{% url 'Banco:listar' %}">Cancelar</a>	
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,220 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+
+{% extends 'Principal/index.html' %}
+{% block content %}
+
+<div class="contenido" style="position: relative; float: left;">
+		<div id="Pie" style="float: left ;width: 420px; height: 300px;  margin: 0 auto"></div>
+		<div id="Bar" style="float: left; ;width: 420px; height: 300px;  margin: 0 auto"></div>
+		<div id="Area" style="float: left; ;width: 420px; height: 300px;  margin: 0 auto"></div>
+</div>
+
+	<script>
+	Highcharts.chart('Pie', {
+        chart: {
+            //plotBackgroundColor: null,
+        // plotBorderWidth: null,
+            plotShadow: false, //marco del charts
+            type: 'pie'
+        },
+        title: {
+            text: 'Tasa de Acciones'
+        },
+    //  tooltip: {
+        // pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    //  },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %', //1.f -> cantidad de decimales
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black' //black color de letras que marca el la seccion del pie
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true, //colores por cada parte del pie
+            
+            data: [
+            {% if bancos %}
+                {% for banco in bancos %}
+                
+                {
+            
+                name: "{{ banco.nombre }}",
+                
+                y: {{ banco.Porcentaje }} ,
+            
+            //   sliced: true,
+            //  selected: true
+            },
+            {% endfor %}
+                {% endif %}
+                ]
+        
+        }]
+    });
+
+    Highcharts.chart('Bar', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Millones por Periodos Anuales'
+    },
+    //subtitle: {
+   //     text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
+   // },
+    xAxis: {
+        
+        categories: [
+        {% if bancos %}
+            {% for banco in bancos %}            
+           
+            '{{ banco.pais }}', 
+
+           
+
+
+            {% endfor %}
+            {% endif %}
+            
+            
+            ],
+        
+        title: {
+            text: 'Paises', //nombre de la categoria
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Population (millions)',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    tooltip: {
+        valueSuffix: ' millions'
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [
+    {% if bancos %}
+            {% for banco in bancos %}
+        {
+        name: 'Year 1800',
+        data: [ {{ banco.Millones }}, ]
+    },
+    {% endfor %}
+            {% endif %}
+    
+    ]
+});
+
+	Highcharts.chart('Area', {
+    chart: {
+        type: 'area'
+    },
+    title: {
+        text: 'Análisis por Paises'
+    },
+    subtitle: {
+        text: 'Sources: <a href="https://thebulletin.org/2006/july/global-nuclear-stockpiles-1945-2006">' +
+            'thebulletin.org</a> &amp; <a href="https://www.armscontrol.org/factsheets/Nuclearweaponswhohaswhat">' +
+            'armscontrol.org</a>'
+    },
+    xAxis: {
+        allowDecimals: false,
+        labels: {
+            formatter: function () {
+                return this.value; // clean, unformatted number for year
+            }
+        }
+    },
+    yAxis: {
+        title: {
+            text: 'Miles'
+        },
+        labels: {
+            formatter: function () {
+                return this.value / 1000 + 'k';
+            }
+        }
+    },
+    tooltip: {
+        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
+    },
+    plotOptions: {
+        area: {
+            pointStart: 2015,
+            marker: {
+                enabled: false,
+                symbol: 'circle',
+                radius: 2,
+                states: {
+                    hover: {
+                        enabled: true
+                    }
+                }
+            }
+        }
+    },
+    series: [
+        
+    {% if bancos %}
+        {% for banco in bancos %}
+        
+        {
+
+      
+        name: '{{ banco.pais }}',
+        
+        data: [
+            {{ banco.fk_egresos.egresos }} , {{ banco.fk_ingresos.ingresos }} , {{ banco.fk_engresos.egresos_neto }}
+        ],
+       
+
+    },
+    {% endfor %}
+        {% endif %}
+    
+     ]
+});
+	</script>
+
+
+
+
+
+
+{% endblock %}
